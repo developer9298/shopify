@@ -1,180 +1,158 @@
-export default function OrderConfirmation(){
-    return(
-        <>
-        <section class="blog-banner-area" id="category">
-		<div class="container h-100">
-			<div class="blog-banner">
-				<div class="text-center">
-					<h1>Order Confirmation</h1>
-					<nav aria-label="breadcrumb" class="banner-breadcrumb">
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active" aria-current="page">Shop Category</li>
-            </ol>
-          </nav>
-				</div>
-			</div>
-    </div>
-	</section>
+import { useEffect, useState } from "react"
+import apiService from "../apiService"
+import { Link } from "react-router-dom"
+import { toast } from "react-toastify"
+export default function OrderConfirmation() {
+  const [myData, setMyData] = useState([])
 
-    <section class="order_details section-margin--small">
-    <div class="container">
-      <p class="text-center billing-alert">Thank you. Your order has been received.</p>
-      <div class="row mb-5">
-        <div class="col-md-6 col-xl-4 mb-4 mb-xl-0">
-          <div class="confirmation-card">
-            <h3 class="billing-title">Order Info</h3>
-            <table class="order-rable">
-              <tr>
-                <td>Order number</td>
-                <td>: 60235</td>
-              </tr>
-              <tr>
-                <td>Date</td>
-                <td>: Oct 03, 2017</td>
-              </tr>
-              <tr>
-                <td>Total</td>
-                <td>: USD 2210</td>
-              </tr>
-              <tr>
-                <td>Payment method</td>
-                <td>: Check payments</td>
-              </tr>
-            </table>
-          </div>
-        </div>
-        <div class="col-md-6 col-xl-4 mb-4 mb-xl-0">
-          <div class="confirmation-card">
-            <h3 class="billing-title">Billing Address</h3>
-            <table class="order-rable">
-              <tr>
-                <td>Street</td>
-                <td>: 56/8 panthapath</td>
-              </tr>
-              <tr>
-                <td>City</td>
-                <td>: Dhaka</td>
-              </tr>
-              <tr>
-                <td>Country</td>
-                <td>: Bangladesh</td>
-              </tr>
-              <tr>
-                <td>Postcode</td>
-                <td>: 1205</td>
-              </tr>
-            </table>
-          </div>
-        </div>
-        <div class="col-md-6 col-xl-4 mb-4 mb-xl-0">
-          <div class="confirmation-card">
-            <h3 class="billing-title">Shipping Address</h3>
-            <table class="order-rable">
-              <tr>
-                <td>Street</td>
-                <td>: 56/8 panthapath</td>
-              </tr>
-              <tr>
-                <td>City</td>
-                <td>: Dhaka</td>
-              </tr>
-              <tr>
-                <td>Country</td>
-                <td>: Bangladesh</td>
-              </tr>
-              <tr>
-                <td>Postcode</td>
-                <td>: 1205</td>
-              </tr>
-            </table>
-          </div>
-        </div>
-      </div>
-      <div class="order_details_table">
-        <h2>Order Details</h2>
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">Product</th>
-                <th scope="col">Quantity</th>
-                <th scope="col">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <p>Pixelstore fresh Blackberry</p>
-                </td>
-                <td>
-                  <h5>x 02</h5>
-                </td>
-                <td>
-                  <p>$720.00</p>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <p>Pixelstore fresh Blackberry</p>
-                </td>
-                <td>
-                  <h5>x 02</h5>
-                </td>
-                <td>
-                  <p>$720.00</p>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <p>Pixelstore fresh Blackberry</p>
-                </td>
-                <td>
-                  <h5>x 02</h5>
-                </td>
-                <td>
-                  <p>$720.00</p>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <h4>Subtotal</h4>
-                </td>
-                <td>
-                  <h5></h5>
-                </td>
-                <td>
-                  <p>$2160.00</p>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <h4>Shipping</h4>
-                </td>
-                <td>
-                  <h5></h5>
-                </td>
-                <td>
-                  <p>Flat rate: $50.00</p>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <h4>Total</h4>
-                </td>
-                <td>
-                  <h5></h5>
-                </td>
-                <td>
-                  <h4>$2210.00</h4>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+  const fetchOrder = () => {
+    apiService.getOrders()
+      .then((res) => {
+        if (res.data.success == true) {
+          setMyData(res.data.data)
+          console.log(myData)
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
+  useEffect(
+    () => {
+      fetchOrder()
+    }, []
+  )
+
+  const changeStatus = (id, orderStatus) => {
+
+
+
+    let data = {
+      _id: id,
+      orderStatus: orderStatus
+    }
+    console.log(data)
+    apiService.changeOrderStatus(data)
+      .then((res) => {
+        if (res.data.success == true) {
+          toast.success(res.data.message)
+
+          fetchOrder()
+        }
+        else {
+          toast.error(res.data.message)
+        }
+      })
+      .catch((err) => {
+        toast.error(err.message)
+      })
+
+
+  }
+
+
+
+  return (
+    <>
+      <div class="d-flex flex-column flex-lg-row h-lg-full bg-surface-secondary">
+
+        <div class="h-screen flex-grow-1 overflow-y-lg-auto">
+          <header class="bg-surface-primary border-bottom pt-6">
+            <div class="container-fluid  my-5">
+              <div class="mb-npx">
+                <div class="row align-items-center">
+                  <div class="col-sm-6 col-12 mb-4 mb-sm-0">
+                    <h1 class="h2 mb-0 ls-tight">Orders Summary</h1>
+                  </div>
+                
+                </div>
+
+              </div>
+            </div>
+          </header>
+
+          <main class="py-6 bg-surface-secondary">
+            <div class="container-fluid">
+
+
+              <div class="card shadow border-0 mb-7">
+                <div class="card-header">
+                  <h5 class="mb-0">ORDER SUMMARY</h5>
+                </div>
+                <div class="table-responsive">
+                  <table class="table table-hover table-nowrap">
+                    <thead class="thead-light">
+                      <tr>
+                        <th scope="col">S.No</th>
+                        <th scope="col">Name</th>
+
+                        <th scope="col">Product Name</th>
+                        <th scope="col">Address</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Status</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>{
+                      myData?.map((el, index) => (
+
+                        <tr key={index}>
+                          <td>{index + 1}</td>
+                          <td>{el?.userId?.name}</td>
+                          <td>
+                            <a class="text-heading font-semibold" href="#">
+                              <Link to={"/productcheckout/" + el?._id}>
+                                <img alt="..." src={el?.productId?.image} class="avatar avatar-xs me-2" style={{ height: '80px', width: '80px' }} />
+                              </Link>
+                              {el?.productId?.name}
+                            </a>
+                          </td>
+                          <td>
+                            {el?.address}
+                          </td>
+
+                          <td>
+                            {el?.productId?.price}
+                          </td>
+                          <td>
+                            <span class="badge badge-lg badge-dot">
+                              {el?.orderStatus == "Cancelled" ?
+                                <>
+                                  <i class="bg-danger"></i> {el?.orderStatus}
+                                </> :
+                                <>
+                                  <i class="bg-success"></i> {el?.orderStatus}
+                                </>
+
+                              }
+
+                            </span>
+                          </td>
+                          <td class="text-end">
+
+                            {el?.orderStatus == "Pending" ?
+
+                              <>
+                                <button style={{ marginLeft: '20px', height: '30px', width: '60px', fontSize: '10px', justifyItems: 'center', backgroundColor: 'green', borderRadius: '10px', color: 'white' }}
+                                  onClick={() => {
+
+                                    changeStatus(el?._id, "Cancelled")
+                                  }}                             >Cancel</button>
+                              </> :
+                              <></>}
+                          </td>
+                        </tr>
+                      ))
+                    }
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+            </div>
+          </main>
         </div>
       </div>
-    </div>
-  </section>
-        </>
-    )
+    </>
+  )
 }

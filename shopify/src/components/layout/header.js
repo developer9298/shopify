@@ -1,12 +1,30 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function Header() {
     const loc = useLocation()
     const path = loc.pathname
+    const nav = useNavigate()
     console.log(path)
+    const isLogin = localStorage.getItem("isLogin")
+    const name = localStorage.getItem("name")
+    const email = localStorage.getItem("email")
+
+    console.log(name, email)
+    const logout = () => {
+        localStorage.clear()
+
+        nav("/login")
+    }
+
+
+
+
+
     return (
         <>
-            <header class="header_area">
+        
+ {localStorage.getItem('userType')==2  ?
+         <header class="header_area">
                 <div class="main_menu bg-warning ">
                     <nav class="navbar navbar-expand-lg navbar-light">
                         <div class="container">
@@ -21,57 +39,141 @@ export default function Header() {
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
-                            <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
+                            <div class="collapse navbar-collapse offset mr-4" id="navbarSupportedContent" >
                                 <ul class="nav navbar-nav menu_nav ml-auto mr-auto">
                                     <li class="nav-item ">
                                         <Link to="/" class={path == "/" ? "nav-item nav-link active" : "nav-item nav-link"}>Home</Link>
 
                                     </li>
-                                    <li class="nav-item submenu dropdown">
-                                        <Link href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                                            aria-expanded="false">Shop</Link>
-                                        <ul class="dropdown-menu">
-                                            <li class="nav-item">
-                                                <Link to="/shopcatagory" class="nav-link" href="category.html">Shop Category</Link></li>
-                                            <li class="nav-item">
-                                                <Link to="/productdetail" class="nav-link" href="single-product.html">Product Details</Link>
-                                            </li>
-                                            <li class="nav-item">
-                                                <Link to="/productcheckout"  class="nav-link" href="checkout.html">Product Checkout</Link></li>
-                                            <li class="nav-item"><Link to="/confirmation" class="nav-link" href="confirmation.html">Confirmation</Link></li>
-                                            <li class="nav-item"><Link to="/cart" class="nav-link" href="cart.html">Shopping Cart</Link></li>
-                                        </ul>
-                                    </li>
-                                    <li class="nav-item submenu dropdown">
-                                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                                            aria-expanded="false">Blog</a>
-                                        <ul class="dropdown-menu">
-                                            <li class="nav-item"><Link to="/blog" class="nav-link" href="blog.html">Blog</Link></li>
-                                            <li class="nav-item"><Link to="/blogdetail" class="nav-link" href="single-blog.html">Blog Details</Link></li>
-                                        </ul>
-                                    </li>
-                                    <li class="nav-item submenu dropdown">
-                                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                                            aria-expanded="false">Pages</a>
-                                        <ul class="dropdown-menu">
-                                            <li class="nav-item"><Link to="/login" class="nav-link" href="login.html">Login</Link></li>
-                                            <li class="nav-item"><Link to="/register" class="nav-link" href="register.html">Register</Link></li>
-                                            <li class="nav-item"><Link to="/tracking" class="nav-link" href="tracking-order.html">Tracking</Link></li>
-                                        </ul>
-                                    </li>
-                                    <li class="nav-item"><Link to="/contact" class="nav-link" href="contact.html">Contact</Link></li>
-                                </ul>
+                                    <li class="nav-item ">
+                                        <Link to="/allproducts" class={path == "/allproducts" ? "nav-item nav-link active" : "nav-item nav-link"}>Products</Link>
 
-                                <ul class="nav-shop">
-                                    <li class="nav-item"><button><i class="ti-search"></i></button></li>
-                                    <li class="nav-item"><button><i class="ti-shopping-cart"></i><span class="nav-shop__circle">3</span></button> </li>
-                                    <li class="nav-item"><a class="button button-header" href="#">Buy Now</a></li>
+                                    </li>
+                                      <li class="nav-item ">
+                                        <Link to="/confirmation" class={path == "/confirmation" ? "nav-item nav-link active" : "nav-item nav-link"}>My Order</Link>
+
+                                    </li>
+                                        
+                                    {isLogin ? <>
+                                        <li class="nav-item">    <Link to="/login" class="nav-link" href="contact.html" onClick={logout}>Logout</Link></li>
+                                    </> : <> <li class="nav-item"> <Link to="/login" class="nav-link" href="contact.html">Login</Link></li></>}
+
+
                                 </ul>
+                                <i class="fa fa-user-circle-o" style={{ fontSize: '30px', color: 'orange' }}></i>
+                                <Link to={"/changePassword"}>
+                                    <img style={{ width: '50px', height: '50px' }} src='https://icon-library.com/images/admin-icon/admin-icon-25.jpg' alt="" />
+                                </Link>
+                                <div class=" d-none d-lg-flex">
+                                    <div class="ps-3">
+                                        {isLogin ? <><small class="text-dark mb-0">{name}</small>
+                                            <p class="text-dark fs-3 mb-0">{email}</p></> : <>
+                                        </>}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </nav>
                 </div>
-            </header>
+            </header>:
+            //admin
+             <header class="header_area">
+                <div class="main_menu bg-warning ">
+                    <nav class="navbar navbar-expand-lg navbar-light">
+                        <div class="container">
+                            <a class="navbar-brand logo_h" href="index.html">
+                                <h2 style={{ fontFamily: 'cursive' }}>Shopify</h2>
+
+                            </a>
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <div class="collapse navbar-collapse offset mr-4" id="navbarSupportedContent" >
+                                <ul class="nav navbar-nav menu_nav ml-auto mr-auto">
+                                    <li class="nav-item ">
+                                        <Link to="/" class={path == "/" ? "nav-item nav-link active" : "nav-item nav-link"}>Home</Link>
+
+                                    </li>
+                                    <li class="nav-item ">
+                                        <Link to="/dashboard" class={path == "/dashboard" ? "nav-item nav-link active" : "nav-item nav-link"}>Dashboard</Link>
+
+                                    </li>
+                                   
+                                        <li class="nav-item submenu dropdown">
+                                            <Link href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                                                aria-expanded="false">Catagory</Link>
+                                            <ul class="dropdown-menu">
+                                                <li class="nav-item">
+                                                    <Link to="/addcatagory" class="nav-link" href="category.html">Add Category</Link></li>
+                                                <li class="nav-item">
+                                                    <Link to="/shopcatagory" class="nav-link" href="category.html">Shop Category</Link></li>
+
+
+                                            </ul>
+                                        </li>
+
+                                    
+                                    <li class="nav-item submenu dropdown">
+                                        <Link href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                                            aria-expanded="false">Product</Link>
+                                        <ul class="dropdown-menu">
+                                            
+                                                <li class="nav-item">
+                                                    <Link to="/addproduct" class="nav-link" href="category.html">Add Product</Link></li>
+
+
+                                           
+
+                                            <li class="nav-item">
+                                                <Link to="/subProduct" class="nav-link" href="category.html">Shop Products</Link></li>
+                                        </ul>
+                                    </li>
+
+
+                                   
+
+                                        <li class="nav-item submenu dropdown">
+                                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                                                aria-expanded="false">Sub-Catagory</a>
+                                            <ul class="dropdown-menu">
+                                                <li class="nav-item"><Link to="/addsubcatagory" class="nav-link" href="blog.html">Add Sub-Catagory</Link></li>
+                                                <li class="nav-item"><Link to="/getsubcatagory" class="nav-link" href="single-blog.html">Shop Sub-Catagory</Link></li>
+                                            </ul>
+                                        </li>
+
+                                    
+
+                                   
+ 
+                                        
+                                    {isLogin ? <>
+                                        <li class="nav-item">    <Link to="/login" class="nav-link" href="contact.html" onClick={logout}>Logout</Link></li>
+                                    </> : <> <li class="nav-item"> <Link to="/login" class="nav-link" href="contact.html">Login</Link></li></>}
+
+
+                                </ul>
+                                <i class="fa fa-user-circle-o" style={{ fontSize: '30px', color: 'orange' }}></i>
+                                <Link to={"/changePassword"}>
+                                    <img style={{ width: '50px', height: '50px' }} src='https://icon-library.com/images/admin-icon/admin-icon-25.jpg' alt="" />
+                                </Link>
+                                <div class=" d-none d-lg-flex">
+                                    <div class="ps-3">
+                                        {isLogin ? <><small class="text-dark mb-0">{name}</small>
+                                            <p class="text-dark fs-3 mb-0">{email}</p></> : <>
+                                        </>}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </header>   
+        
+        }
+
         </>
     )
 }

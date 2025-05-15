@@ -1,23 +1,20 @@
-import axios from "axios"
-import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
-import apiService from "../apiService"
 import { BeatLoader } from "react-spinners"
-import { Link } from "react-router-dom"
-export default function ShopCatagory() {
+import apiService from "../apiService"
+import { useEffect, useState } from "react"
+import { Link, useLocation } from "react-router-dom"
+export default function SubProduct() {
     const [loading, setLoading] = useState(false)
-
-    const [catagory, setCatagory] = useState([])
-    const fetchCategory = () => {
+ 
+    const [product, setProduct] = useState([])
+    
+    const fetchProducts = () => {
         setLoading(true)
-        apiService.getCatagory()
+        apiService.getProducts()
             .then((res) => {
-               
+                console.log(res.data)
                 if (res.data.success == true) {
-
-                    setCatagory(res.data.data)
-                    console.log(res.data.data)
-                    console.log("hghg")
+                    setProduct(res.data.data)
                 }
             })
             .catch(err => {
@@ -30,48 +27,51 @@ export default function ShopCatagory() {
             })
     }
 
-
-    const changeStatus = (id, status) => {
-    
-            setLoading(true)
-    
-            let data = {
-                _id: id,
-                status: !status
-            }
-            apiService.updateStatusCategory(data)
-                .then((res) => {
-                    if (res.data.success == true) {
-                        toast.success(res.data.message)
-    
-                        fetchCategory()
-                    }
-                    else {
-                        toast.error(res.data.message)
-                    }
-                })
-                .catch((err) => {
-                    toast.error(err.message)
-                })
-                .finally(() => {
-                    setTimeout(() => {
-                        setLoading(false)
-                    }, 1000)
-                })
-        }
-
     useEffect(
         () => {
-            fetchCategory()
+            fetchProducts()
         }, []
     )
+
+    const changeStatus = (id, status) => {
+
+        setLoading(true)
+
+        let data = {
+            _id: id,
+            status: !status
+        }
+        apiService.changeProductStatus(data)
+            .then((res) => {
+                
+                if (res.data.success == true) {
+                     fetchProducts()
+                    toast.success(res.data.message)
+
+                   
+                }
+                else {
+                    toast.error(res.data.message)
+                }
+            })
+            .catch((err) => {
+                toast.error(err.message)
+            })
+            .finally(() => {
+                setTimeout(() => {
+                   
+                    setLoading(false)
+                }, 1000)
+            })
+    }
+
     return (
         <>
             <section class="blog-banner-area" id="category">
                 <div class="container h-100">
                     <div class="blog-banner">
                         <div class="text-center">
-                            <h1>Shop Category</h1>
+                            <h1>All Sub Category</h1>
                             <nav aria-label="breadcrumb" class="banner-breadcrumb">
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="#">Home</a></li>
@@ -98,35 +98,37 @@ export default function ShopCatagory() {
                                     <thead className="table-warning">
                                         <tr>
                                             <th>S.No</th>
-                                            <th>Category Name</th>
                                             <th>Category Image</th>
+                                            <th>Product Image</th>
+                                            <th> Name</th>
+                                          
                                             <th>Edit</th>
                                             <th>Delete</th>
                                         </tr>
                                     </thead>
                                     <tbody >
                                         {
-                                            catagory?.map((el, index) => (
+                                            product?.map((el, index) => (
                                                 <tr key={index}>
                                                     <td>{index + 1}</td>
+                                                    <td>{el?.catagoryId?.name}</td>
                                                     <td>
-                                                        <img src={el?.image} alt="" style={{ height: "100px", width: "100px" }} />
+                                                        <img src={ el?.image} alt="" style={{ height: "100px", width: "100px" }} />
                                                     </td>
                                                     <td>{el?.name}</td>
 
                                                     <td>
-                                                        <Link to = {"/editcatagory/"+el?._id} className="fa fa-edit text-success"></Link>
+                                                        <Link to={"/editProduct/" + el?._id} className="fa fa-edit text-success"></Link>
                                                     </td>
-                                                    <td>
+                                                    
+                                                        <td>
                                                         {el?.status==true?  <button className="btn btn-success" onClick={() => {
                                                             changeStatus(el?._id, el?.status)
                                                         }}>Active</button>:
                                                           <button className="btn btn-danger" onClick={() => {
                                                             changeStatus(el?._id, el?.status)
                                                         }}>In-Active</button>}
-                                                    {/* <button className="btn btn-warning" onClick={() => {
-                                                            changeStatus(el?._id, el?.status)
-                                                        }}>Active</button> */}
+                                                  
                                                     </td>
                                                 </tr>
                                             ))

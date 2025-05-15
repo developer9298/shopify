@@ -1,23 +1,22 @@
-import axios from "axios"
-import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
-import apiService from "../apiService"
 import { BeatLoader } from "react-spinners"
-import { Link } from "react-router-dom"
-export default function ShopCatagory() {
+import apiService from "../apiService"
+import { useEffect, useState } from "react"
+import { Link, useLocation } from "react-router-dom"
+export default function GetSubCatagory() {
     const [loading, setLoading] = useState(false)
-
+    const [categoryId, setCategoryId] = useState(null)
+    const [subCategory, setSubCategory] = useState([])
+const location = useLocation()
     const [catagory, setCatagory] = useState([])
+    
     const fetchCategory = () => {
         setLoading(true)
-        apiService.getCatagory()
+        apiService.getSubCatagory()
             .then((res) => {
-               
+                console.log(res.data)
                 if (res.data.success == true) {
-
                     setCatagory(res.data.data)
-                    console.log(res.data.data)
-                    console.log("hghg")
                 }
             })
             .catch(err => {
@@ -30,48 +29,50 @@ export default function ShopCatagory() {
             })
     }
 
-
-    const changeStatus = (id, status) => {
-    
-            setLoading(true)
-    
-            let data = {
-                _id: id,
-                status: !status
-            }
-            apiService.updateStatusCategory(data)
-                .then((res) => {
-                    if (res.data.success == true) {
-                        toast.success(res.data.message)
-    
-                        fetchCategory()
-                    }
-                    else {
-                        toast.error(res.data.message)
-                    }
-                })
-                .catch((err) => {
-                    toast.error(err.message)
-                })
-                .finally(() => {
-                    setTimeout(() => {
-                        setLoading(false)
-                    }, 1000)
-                })
-        }
-
     useEffect(
         () => {
             fetchCategory()
         }, []
     )
+
+    const changeStatus = (id, status) => {
+
+        setLoading(true)
+
+        let data = {
+            _id: id,
+            status: !status
+        }
+        apiService.updateSubStatusCategory(data)
+            .then((res) => {
+                
+                if (res.data.success == true) {
+                     fetchCategory()
+                    toast.success(res.data.message)
+
+                   
+                }
+                else {
+                    toast.error(res.data.message)
+                }
+            })
+            .catch((err) => {
+                toast.error(err.message)
+            })
+            .finally(() => {
+                setTimeout(() => {
+                   
+                    setLoading(false)
+                }, 1000)
+            })
+    }
     return (
         <>
             <section class="blog-banner-area" id="category">
                 <div class="container h-100">
                     <div class="blog-banner">
                         <div class="text-center">
-                            <h1>Shop Category</h1>
+                            <h1>All Sub Category</h1>
                             <nav aria-label="breadcrumb" class="banner-breadcrumb">
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="#">Home</a></li>
@@ -98,8 +99,10 @@ export default function ShopCatagory() {
                                     <thead className="table-warning">
                                         <tr>
                                             <th>S.No</th>
-                                            <th>Category Name</th>
                                             <th>Category Image</th>
+                                            <th>Subcatagory Image</th>
+                                            <th>Subcatagory Name</th>
+                                          
                                             <th>Edit</th>
                                             <th>Delete</th>
                                         </tr>
@@ -109,15 +112,18 @@ export default function ShopCatagory() {
                                             catagory?.map((el, index) => (
                                                 <tr key={index}>
                                                     <td>{index + 1}</td>
+                                                    <td>{el?.catagoryId?.name}</td>
                                                     <td>
-                                                        <img src={el?.image} alt="" style={{ height: "100px", width: "100px" }} />
+                                                        <img src={ el?.image} alt="" style={{ height: "100px", width: "100px" }} />
                                                     </td>
                                                     <td>{el?.name}</td>
 
                                                     <td>
-                                                        <Link to = {"/editcatagory/"+el?._id} className="fa fa-edit text-success"></Link>
+                                                        <Link to={"/editsubcatagory/" + el?._id} className="fa fa-edit text-success"></Link>
+                                                        {/* <Link to = {"/editsubcatagory/"+el?._id}  className="btn btn-success">Edit</Link> */}
                                                     </td>
-                                                    <td>
+                                                    
+                                                        <td>
                                                         {el?.status==true?  <button className="btn btn-success" onClick={() => {
                                                             changeStatus(el?._id, el?.status)
                                                         }}>Active</button>:
